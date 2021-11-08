@@ -6,7 +6,7 @@
 #include<stdbool.h>
 
 
-static struct node * Insert (int x, struct node *t)
+struct node * Insert (int x, struct node *t)
 {
   if (Empty (t))
     {
@@ -24,7 +24,7 @@ static struct node * Insert (int x, struct node *t)
   return t;
 }
 
-static struct node * Remove (int x, struct node *t)
+struct node * Remove (int x, struct node *t)
 {
   if (Empty (t))
     return NULL;
@@ -68,7 +68,7 @@ static struct node * Remove (int x, struct node *t)
 }
 
 
-static int Contains (int x, struct node *t)
+int Contains (int x, struct node *t)
 {
 
   if (Empty (t))
@@ -86,7 +86,7 @@ static int Contains (int x, struct node *t)
 }
 
 
-static struct node * Initialize (struct node *t)
+struct node * Initialize (struct node *t)
 {
   t = NULL;
   return t;
@@ -97,7 +97,7 @@ int Empty (struct node *t)
   return (t == NULL);
 }
 
-static int Full (struct node *t)
+int Full (struct node *t)
 {
   if (Empty (t))
     return true;
