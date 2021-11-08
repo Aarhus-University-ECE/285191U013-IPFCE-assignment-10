@@ -29,8 +29,22 @@ TEST_CASE("linked_list")
 	REQUIRE(sum==1);
 	
 	//exercise 3
-	
-	
+	//ns contains one node with the value 1
+	node *mns = map (ns, square);
+	sum=sum_squares(ns);
+	REQUIRE(sum==1);
+	free_list(ns);
+  	ns = make_node (1,
+			make_node (2,
+				   make_node (3,
+					      &SENTINEL)));
+	//ns is 1->2->3
+  	node *mns = map (ns, square);
+	//ns is 1->4->9
+	sum=sum_squares(ns);
+	//1+16+81 = 98
+	REQUIRE(sum==98);
+	free_list(ns);
 }
 
 TEST_CASE("btree")
