@@ -40,11 +40,13 @@ void free_list (node * p)
 void print_list (node * p)
 {
     // Add your code for exercise 1
+    // There is NO testcode for this
 }
 
 int sum_squares (node * p)
 {
     // Add your code for excercise 2
+    // You can find the tests in tests.cpp
 }
 
 node *map (node * p, int (*f) (int))
