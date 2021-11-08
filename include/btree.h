@@ -1,18 +1,18 @@
 #ifndef BTREE_H
 #define BTREE_H
 
-struct node
+struct tree_node
 {
   int item;
-  struct node *left;
-  struct node *right;
+  struct tree_node *left;
+  struct tree_node *right;
 };
 
-int Empty (struct node *t);
-static struct node * Insert (int x, struct node *t);
-static struct node * Remove (int x, struct node *t);
-static int Contains (int x, struct node *t);
-static struct node * Initialize (struct node *t);
-static int Full (struct node *t);
+int Empty (struct tree_node *t);
+struct tree_node * Insert (int x, struct tree_node *t);
+struct tree_node * Remove (int x, struct tree_node *t);
+int Contains (int x, struct tree_node *t);
+struct tree_node * Initialize (struct tree_node *t);
+int Full (struct tree_node *t);
 
 #endif // BTREE_H
