@@ -52,8 +52,7 @@ TEST_CASE("linked_list")
 
 TEST_CASE("btree")
 {
-    // Add your tests here you can use the REQUIRE() statement
-	
+    	
 	  /*
      //               20
      //             /    \
