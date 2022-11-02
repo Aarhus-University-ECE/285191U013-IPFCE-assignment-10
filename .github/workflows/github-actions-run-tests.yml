@@ -9,9 +9,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v3
-      
-      - name: List files
-        run: ls -la
+
       - name: Build tests target
         run: cmake -S . -B build
       - name: Run tests
