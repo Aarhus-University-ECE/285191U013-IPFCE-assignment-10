@@ -16,7 +16,8 @@ jobs:
       - name: Build cmake target tests
       - run: cmake -S . -B ./build && cmake --build build
       - name: Run test suite
-      - run: [ -e ./build/tests/tests ] && ./build/tests/tests
+      - run: ./build/tests/tests
+      # - run: [ -e ./build/tests/tests ] && ./build/tests/tests
        - run: echo "🍏 The return status of the test suite is ${{ job.status }}."
       # - name: List files in the repository
       #   run: |
