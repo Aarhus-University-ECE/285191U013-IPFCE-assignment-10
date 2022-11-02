@@ -2,7 +2,7 @@ name: Run Unit Tests
 run-name: ${{ github.actor }} is running the unit tests 🚀
 on: [push]
 jobs:
-  Run Catch2 tests:
+  run-catch2-tests:
     runs-on: ubuntu-latest
     steps:
       - run: echo "🐧 This job is now running on a ${{ runner.os }} server hosted by GitHub!"
