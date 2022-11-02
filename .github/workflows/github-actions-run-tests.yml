@@ -5,12 +5,20 @@ jobs:
   run-catch2-tests:
     runs-on: ubuntu-latest
     steps:
-      - run: echo "🐧 This job is now running on a ${{ runner.os }} server hosted by GitHub!"
+      - name: Download dependencies
+      - run: echo "Update apt repository and install [gcc, cmake, make]"
+      - run: sudo apt update -y && sudo apt install gcc cmake make -y 
+      # - run: echo "🐧 This job is now running on a ${{ runner.os }} server hosted by GitHub!"
       - name: Check out repository code
         uses: actions/checkout@v3
       - run: echo "💡 The ${{ github.repository }} repository has been cloned to the runner."
       - run: echo "🖥️ The workflow is now ready to test your code on the runner."
-      - name: List files in the repository
-        run: |
-          ls ${{ github.workspace }}
-      - run: echo "🍏 This job's status is ${{ job.status }}."
+      - name: Build cmake target tests
+      - run: cmake -S . -B ./build && cmake --build build
+      - name: Run test suite
+      - run: [ -e ./build/tests/tests ] && ./build/tests/tests
+       - run: echo "🍏 The return status of the test suite is ${{ job.status }}."
+      # - name: List files in the repository
+      #   run: |
+      #     ls ${{ github.workspace }}
+      # - run: echo "🍏 This job's status is ${{ job.status }}."
