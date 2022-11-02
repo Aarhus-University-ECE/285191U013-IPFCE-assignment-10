@@ -11,44 +11,65 @@ extern "C"
 
 TEST_CASE("linked_list")
 {
-    	//exercise 2
-    	int sum;
-      node *ns = NULL;
-    	ns = make_node (1,
-			make_node (2,
-				   make_node (3,
-					      make_node (4,
-							  make_node (5,
-								    &SENTINEL_node)))));
+  //exercise 2
+  {
+    int sum;
+  node *ns = make_node (1,
+              make_node (2,
+                make_node (3,
+                  make_node (4,
+                    make_node (5,
+                      NULL)))));
 
-	sum = sum_squares (ns);	/* sum should equal 55 */
-  	REQUIRE(sum==55);
-  	free_list(ns);
+	sum = sum_squares (ns);
+  REQUIRE(sum==55);
+  free_list(ns);
+  // dangling pointer we need to set it to null
+  ns = NULL;
+
 	sum=sum_squares(ns);
 	REQUIRE(sum==0);
 
-	ns = make_node (1,&SENTINEL_node);
-	sum=sum_squares(ns);
-	REQUIRE(sum==1);
-	
+	ns = make_node (1, NULL);
+	sum = sum_squares(ns);
+	REQUIRE(sum == 1);
+	free_list(ns);
+	ns = NULL;
+  }
+
 	//exercise 3
-	//ns contains one node with the value 1
+  {
+	int sum;
+	node* ns = make_node(1, NULL);
+    //ns contains one node with the value 1
 	node *mns = map (ns, square);
-	sum=sum_squares(ns);
+	sum = sum_squares(mns);
+
 	REQUIRE(sum==1);
 	free_list(ns);
-  	ns = make_node (1,
-			make_node (2,
-				   make_node (3,
-					      &SENTINEL_node)));
+  free_list(mns);
+  // dangling pointer we need to set it to null
+  ns = NULL;
+  mns = NULL;
+
+  ns = make_node (1,
+		    make_node (2,
+				  make_node (3,
+					      NULL)));
 	//ns is 1->2->3
-  	mns = map (ns, square);
-	//ns is 1->4->9
-	sum=sum_squares(ns);
-	//1+16+81 = 98
+  mns = map (ns, square);
+  free_list(ns);
+  ns = NULL;
+	// mns is 1->4->9
+	sum=sum_squares(mns);
+  free_list(mns);
+  mns = NULL;
+
+	// (1^2)^2 1 + (2^2)^2 + (3^2)^2 = 1^4 + 2^4 + 3^4 = 98
 	REQUIRE(sum==98);
-	free_list(ns);
+  }
 }
+
 
 TEST_CASE("btree")
 {

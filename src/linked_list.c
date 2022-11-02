@@ -7,31 +7,31 @@
 #include <stdlib.h>		/* malloc, free */
 #include <assert.h>		/* assert */
 
+#include "linked_list.h"
+
 /* functions to create lists */
 node *make_node (int v, node * q)
 {
-  node *p = malloc (sizeof (node));
-  p->value = v;
-
-  if (q == &SENTINEL_node)
-    p->next = &SENTINEL_node;
-  else
+    node *p = malloc (sizeof (node));
+    p->value = v;
     p->next = q;
-  return p;
+    return p;
 }
+
+
+
+
 
 /* free all nodes in the list p */
 void free_list (node * p)
 {
-  node *q = p;
-  while (q != &SENTINEL_node)
-    {
-      node *t = q->next;
-      free (q);
-      q = t;
-    }
+  node *q;
+  while (p != NULL) {
+    q = p->next;
+    free (p);
+    p = q;
+  }
 }
-
 
 /* print list to console */
 void print_list (node * p)
@@ -47,9 +47,11 @@ int sum_squares (node * p)
     return -1;
 }
 
-node *map (node * p, int (*f) (int))
-{
-    // Add your code for excercise 3
+typedef int (*fn_int_to_int) (int);
+
+
+node *map (node * p, fn_int_to_int f)
+  {
     return NULL;
 }
 
@@ -58,3 +60,6 @@ int square (int x)
 {
   return x * x;
 }
+
+// example of another function that can be passed to map
+int sign(int x) { return x == 0 ? 0 : (x < 0 ? -1 : 1); }

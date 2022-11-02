@@ -28,8 +28,9 @@ add_library(mymath src/linked_list.c src/btree.c)
 target_include_directories(mymath PUBLIC include)
 
 # define executable named main for experimenting and debugging code
-add_executable(main src/main.cpp)
-target_link_libraries(main mymath)
+add_executable(main src/main.c)
+# target_compile_options(main PRIVATE -g)
+target_link_libraries(main PUBLIC mymath)
 
 # tests are added by declaring a target, in this case 'tests'. additional tests
 # can be added by expanding the test cases in 'src/tests.cpp' or an additional
