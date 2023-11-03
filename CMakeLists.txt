@@ -1,40 +1,40 @@
-cmake_minimum_required(VERSION 3.10)
-project(template)
-include(CTest)
+cmake_minimum_required(VERSION 3.16)
+project(assignment-10 VERSION 0.1.0 LANGUAGES CXX C)
 
-set(CMAKE_CXX_STANDARD 14)
+set(CMAKE_CXX_STANDARD 17)
+set(CMAKE_CXX_STANDARD_REQUIRED ON)
+set(CMAKE_CXX_EXTENSIONS OFF)
+set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
 
-# static checks
-# if(MSVC)
-#   add_compile_options(/W4 /WX)
-# else()
-#   add_compile_options(-Wall -Wextra -pedantic -Werror)
-# endif()
+include(FetchContent)
 
-# set(CMAKE_CXX_CLANG_TIDY
-#   clang-tidy;
-#   -checks=*;
-# )
+FetchContent_Declare(
+		Catch2
+		GIT_REPOSITORY https://github.com/catchorg/Catch2.git
+		GIT_TAG        v3.4.0 # newest version as of 2023-11-03T10:38:28 CET
+)
 
-# set(CMAKE_CXX_CPPCHECK
-#   cppcheck;
-#   --error-exitcode=1;
-# )
+FetchContent_MakeAvailable(Catch2)
 
+add_library(linked_list STATIC linked_list.c)
+add_library(btree STATIC btree.c)
 
-# define library called queue that can imported into other targets via
-# 'target_link_libraries'
-add_library(mymath src/linked_list.c src/btree.c)
-target_include_directories(mymath PUBLIC include)
+set(libs linked_list btree)
 
-# define executable named main for experimenting and debugging code
-add_executable(main src/main.c)
-# target_compile_options(main PRIVATE -g)
-target_link_libraries(main PUBLIC mymath)
+# Force compiler to output in color when you use ninja as generator
+# https://stackoverflow.com/questions/73349743/ninja-build-system-gcc-clang-doesnt-output-diagnostic-colors
+set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -fdiagnostics-color=always")
+set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -fdiagnostics-color=always")
 
-# tests are added by declaring a target, in this case 'tests'. additional tests
-# can be added by expanding the test cases in 'src/tests.cpp' or an additional
-# target via 'add_executable'
-enable_testing()
-add_subdirectory(tests)
+foreach(lib ${libs})
+	target_compile_options(${lib}
+		PUBLIC
+		$<$<OR:$<CXX_COMPILER_ID:GNU>,$<CXX_COMPILER_ID:Clang>>:-Wall -Wpedantic>
+	)
+endforeach()
 
+add_executable(unit-tests tests/tests.cpp)
+target_include_directories(unit-tests PRIVATE ${CMAKE_CURRENT_SOURCE_DIR})
+target_link_libraries(unit-tests ${libs})
+target_link_libraries(unit-tests Catch2::Catch2WithMain)
+target_compile_options(unit-tests PRIVATE -Wno-comment)
