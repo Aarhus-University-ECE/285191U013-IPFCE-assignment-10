@@ -765,6 +765,8 @@ TEST_CASE("second-law") {
 	t = btree_insert(x, t);
 	const bool y = btree_contains(x, t);
 	REQUIRE(y == true);
+
+	btree_free(t);
 }
 
 TEST_CASE("third-law") {
@@ -775,6 +777,8 @@ TEST_CASE("third-law") {
 	t = btree_insert(y, t);
 	const bool z = btree_contains(x, t);
 	REQUIRE(z == true);
+
+	btree_free(t);
 }
 
 TEST_CASE("fourth-law") {
