@@ -90,11 +90,11 @@ bool is_binary_search_tree(btree_node *root) {
         return true;
     }
 
-    if (root->left != NULL && root->left->item >= root->item) {
+    if (root->left != NULL && root->left->data >= root->data) {
         return false;
     }
 
-    if (root->right != NULL && root->right->item <= root->item) {
+    if (root->right != NULL && root->right->data <= root->data) {
         return false;
     }
 
@@ -114,7 +114,7 @@ void btree_free(btree_node *root) {
 btree_node *btree_allocate(int item) {
 	btree_node *root = (btree_node*)malloc(sizeof(btree_node));
 	assert(root != NULL);
-	root->item = item;
+	root->data = item;
 	root->left = NULL;
 	root->right = NULL;
 	return root;
@@ -125,7 +125,7 @@ TEST_CASE("btree_empty") {
 	REQUIRE(btree_empty(root));
 
 	root = (btree_node*)malloc(sizeof(btree_node));
-	root->item = 42;
+	root->data = 42;
 	root->left = NULL;
 	root->right = NULL;
 	REQUIRE(!btree_empty(root));
@@ -135,11 +135,21 @@ TEST_CASE("btree_empty") {
 TEST_CASE("btree_insert") {
 	btree_node* root = NULL;
 	root = btree_insert(42, root);
-	REQUIRE(root->item == 42);
+	REQUIRE(root->data == 42);
+	REQUIRE(root->left == NULL); // 42 has no left child
+	REQUIRE(root->right == NULL); // 42 has no right child
 	root = btree_insert(17, root);
-	REQUIRE(root->left->item == 17);
+	REQUIRE(root->left != NULL);
+	REQUIRE(root->left->data == 17);
+	REQUIRE(root->right == NULL); // 42 no right child
+	REQUIRE(root->left->left == NULL); // 17 has no left child
+	REQUIRE(root->left->right == NULL); // 17 has no right child
 	root = btree_insert(100, root);
-	REQUIRE(root->right->item == 100);
+	REQUIRE(root != NULL);
+	REQUIRE(root->right != NULL);
+	REQUIRE(root->right->data == 100);
+	REQUIRE(root->right->left == NULL); // 100 has no left child
+	REQUIRE(root->right->right == NULL); // 100 has no right child
 
 	btree_free(root);
 }
@@ -228,7 +238,7 @@ TEST_CASE("btree_remove") {
 	// There are 4 cases that the btree_remove() function has too handle
 	// 1. The node to be removed is a leaf
 	root = btree_remove(25, root);
-	pp_btree_node(root, 4, 0);
+	// pp_btree_node(root, 4, 0);
 
 	//               20
 	//             /    \
@@ -245,44 +255,44 @@ TEST_CASE("btree_remove") {
 	//      7      12      42
 
 	REQUIRE(root != NULL);
-	REQUIRE(root->item == 20);
+	REQUIRE(root->data == 20);
 	REQUIRE(root->left != NULL);
-	REQUIRE(root->left->item == 5);
+	REQUIRE(root->left->data == 5);
 	REQUIRE(root->left->left != NULL);
-	REQUIRE(root->left->left->item == 1);
+	REQUIRE(root->left->left->data == 1);
 	REQUIRE(root->left->left->left == NULL); // 1 has no left child
 	REQUIRE(root->left->left->right == NULL); // 1 has no right child
 	REQUIRE(root->left->right != NULL);
-	REQUIRE(root->left->right->item == 15);
+	REQUIRE(root->left->right->data == 15);
 	REQUIRE(root->left->right->left != NULL);
 	REQUIRE(root->left->right->right == NULL); // 15 has no right child
-	REQUIRE(root->left->right->left->item == 9);
+	REQUIRE(root->left->right->left->data == 9);
 	REQUIRE(root->left->right->left->left != NULL);
-	REQUIRE(root->left->right->left->left->item == 7);
+	REQUIRE(root->left->right->left->left->data == 7);
 	REQUIRE(root->left->right->left->left->left == NULL); // 7 has no left child
 	REQUIRE(root->left->right->left->left->right == NULL); // 7 has no right child
 	REQUIRE(root->left->right->left->right != NULL);
-	REQUIRE(root->left->right->left->right->item == 12);
+	REQUIRE(root->left->right->left->right->data == 12);
 	REQUIRE(root->left->right->left->right->left == NULL); // 12 has no left child
 	REQUIRE(root->left->right->left->right->right == NULL); // 12 has no right child
 
 	REQUIRE(root->right != NULL);
-	REQUIRE(root->right->item == 30);
+	REQUIRE(root->right->data == 30);
 	REQUIRE(root->right->left == NULL); // 30 has no left child
 	REQUIRE(root->right->right != NULL);
-	REQUIRE(root->right->right->item == 40);
+	REQUIRE(root->right->right->data == 40);
 	REQUIRE(root->right->right->left == NULL); // 40 has no left child
 	REQUIRE(root->right->right->right != NULL);
-	REQUIRE(root->right->right->right->item == 45);
+	REQUIRE(root->right->right->right->data == 45);
 	REQUIRE(root->right->right->right->right == NULL); // 45 has no right child
 	REQUIRE(root->right->right->right->left != NULL);
-	REQUIRE(root->right->right->right->left->item == 42);
+	REQUIRE(root->right->right->right->left->data == 42);
 	REQUIRE(root->right->right->right->left->left == NULL); // 42 has no left child
 	REQUIRE(root->right->right->right->left->right == NULL); // 42 has no right child
 
 	// 2. The node to be removed has only has a left child
 	root = btree_remove(45, root);
-	pp_btree_node(root, 4, 0);
+	// pp_btree_node(root, 4, 0);
 
 	//               20
 	//             /    \
@@ -299,43 +309,43 @@ TEST_CASE("btree_remove") {
 	//      7      12      
 
 	REQUIRE(root != NULL);
-	REQUIRE(root->item == 20);
+	REQUIRE(root->data == 20);
 	REQUIRE(root->left != NULL);
-	REQUIRE(root->left->item == 5);
+	REQUIRE(root->left->data == 5);
 	REQUIRE(root->left->left != NULL);
-	REQUIRE(root->left->left->item == 1);
+	REQUIRE(root->left->left->data == 1);
 	REQUIRE(root->left->left->left == NULL); // 1 has no left child
 	REQUIRE(root->left->left->right == NULL); // 1 has no right child
 	REQUIRE(root->left->right != NULL);
-	REQUIRE(root->left->right->item == 15);
+	REQUIRE(root->left->right->data == 15);
 	REQUIRE(root->left->right->right == NULL); // 15 has no right child
 	REQUIRE(root->left->right->left != NULL);
-	REQUIRE(root->left->right->left->item == 9);
+	REQUIRE(root->left->right->left->data == 9);
 	REQUIRE(root->left->right->left->left != NULL);
-	REQUIRE(root->left->right->left->left->item == 7);
+	REQUIRE(root->left->right->left->left->data == 7);
 	REQUIRE(root->left->right->left->left->left == NULL); // 7 has no left child
 	REQUIRE(root->left->right->left->left->right == NULL); // 7 has no right child
 	REQUIRE(root->left->right->left->right != NULL);
-	REQUIRE(root->left->right->left->right->item == 12);
+	REQUIRE(root->left->right->left->right->data == 12);
 	REQUIRE(root->left->right->left->right->left == NULL); // 12 has no left child
 	REQUIRE(root->left->right->left->right->right == NULL); // 12 has no right child
 
 
 	REQUIRE(root->right != NULL);
-	REQUIRE(root->right->item == 30);
+	REQUIRE(root->right->data == 30);
 	REQUIRE(root->right->left == NULL); // 30 has no left child
 	REQUIRE(root->right->right != NULL);
-	REQUIRE(root->right->right->item == 40);
+	REQUIRE(root->right->right->data == 40);
 	REQUIRE(root->right->right->left == NULL); // 40 has no left child
 	REQUIRE(root->right->right->right != NULL);
-	REQUIRE(root->right->right->right->item == 42);
+	REQUIRE(root->right->right->right->data == 42);
 	REQUIRE(root->right->right->right->left == NULL); // 42 has no left child
 	REQUIRE(root->right->right->right->right == NULL); // 42 has no right child
 
 	// 3. The node to be removed has only has a right child
 
 	root = btree_remove(30, root);
-	pp_btree_node(root, 4, 0);
+	// pp_btree_node(root, 4, 0);
 
 	//               20
 	//             /    \
@@ -352,36 +362,36 @@ TEST_CASE("btree_remove") {
 	//      7      12      
 
 	REQUIRE(root != NULL);
-	REQUIRE(root->item == 20);
+	REQUIRE(root->data == 20);
 	REQUIRE(root->left != NULL);
-	REQUIRE(root->left->item == 5);
+	REQUIRE(root->left->data == 5);
 	REQUIRE(root->left->left != NULL);
-	REQUIRE(root->left->left->item == 1);
+	REQUIRE(root->left->left->data == 1);
 	REQUIRE(root->left->left->left == NULL); // 1 has no left child
 	REQUIRE(root->left->left->right == NULL); // 1 has no right child
 	REQUIRE(root->left->right != NULL);
-	REQUIRE(root->left->right->item == 15);
+	REQUIRE(root->left->right->data == 15);
 	REQUIRE(root->left->right->right == NULL); // 15 has no right child
 	REQUIRE(root->left->right->left != NULL);
-	REQUIRE(root->left->right->left->item == 9);
+	REQUIRE(root->left->right->left->data == 9);
 	REQUIRE(root->left->right->left->left != NULL);
-	REQUIRE(root->left->right->left->left->item == 7);
+	REQUIRE(root->left->right->left->left->data == 7);
 	REQUIRE(root->left->right->left->left->left == NULL); // 7 has no left child
 	REQUIRE(root->left->right->left->left->right == NULL); // 7 has no right child
 	REQUIRE(root->left->right->left->right != NULL);
-	REQUIRE(root->left->right->left->right->item == 12);
+	REQUIRE(root->left->right->left->right->data == 12);
 
 	REQUIRE(root->right != NULL);
-	REQUIRE(root->right->item == 40);
+	REQUIRE(root->right->data == 40);
 	REQUIRE(root->right->left == NULL); // 40 has no left child
 	REQUIRE(root->right->right != NULL);
-	REQUIRE(root->right->right->item == 42);
+	REQUIRE(root->right->right->data == 42);
 	REQUIRE(root->right->right->left == NULL); // 42 has no left child
 	REQUIRE(root->right->right->right == NULL); // 42 has no right child
 
 	// 4. The node to be removed has both left and right children
 	root = btree_remove(5, root);
-	pp_btree_node(root, 4, 0);
+	// pp_btree_node(root, 4, 0);
 
 	//               20
 	//             /    \
@@ -398,31 +408,31 @@ TEST_CASE("btree_remove") {
 	//            12      
 	
 	REQUIRE(root != NULL);
-	REQUIRE(root->item == 20);
+	REQUIRE(root->data == 20);
 	REQUIRE(root->left != NULL);
-	REQUIRE(root->left->item == 7);
+	REQUIRE(root->left->data == 7);
 	REQUIRE(root->left->left != NULL);
-	REQUIRE(root->left->left->item == 1);
+	REQUIRE(root->left->left->data == 1);
 	REQUIRE(root->left->left->left == NULL); // 1 has no left child
 	REQUIRE(root->left->left->right == NULL); // 1 has no right child
 	REQUIRE(root->left->right != NULL);
-	REQUIRE(root->left->right->item == 15);
+	REQUIRE(root->left->right->data == 15);
 	REQUIRE(root->left->right->right == NULL); // 15 has no right child
 	REQUIRE(root->left->right->left != NULL);
-	REQUIRE(root->left->right->left->item == 9);
+	REQUIRE(root->left->right->left->data == 9);
 	REQUIRE(root->left->right->left->left == NULL); // 9 has no left child
 	REQUIRE(root->left->right->left->right != NULL);
-	REQUIRE(root->left->right->left->right->item == 12);
+	REQUIRE(root->left->right->left->right->data == 12);
 	REQUIRE(root->left->right->left->right->left == NULL); // 12 has no left child
 	REQUIRE(root->left->right->left->right->right == NULL); // 12 has no right child
 
 	REQUIRE(root->right != NULL);
-	REQUIRE(root->right->item == 40);
+	REQUIRE(root->right->data == 40);
 	REQUIRE(root->right->left == NULL); // 40 has no left child
 	REQUIRE(root->right->right != NULL);
-	REQUIRE(root->right->right->item == 42);
+	REQUIRE(root->right->right->data == 42);
 	REQUIRE(root->right->right->left == NULL); // 42 has no left child
-	REQUIRE(root->right->right->right == NULL); // 42 has no right child	
+	REQUIRE(root->right->right->right == NULL); // 42 has no right child
 	
 	btree_free(root);
 }
@@ -431,27 +441,23 @@ TEST_CASE("btree_remove") {
 // Test entire btree API
 TEST_CASE("btree") {
 	//               20
-  //             /    \
-  //            /      \
-  //           5       30
-  //         /   \     /\
-  //        /     \   /  \
-  //       1      15 25  40
-  //            /          \
-  //           /            \
-  //          9             45
-  //        /   \          /
-  //       /     \        /
-  //      7      12      42
+	//             /    \
+	//            /      \
+	//           5       30
+	//         /   \     /\
+	//        /     \   /  \
+	//       1      15 25  40
+	//            /          \
+	//           /            \
+	//          9             45
+	//        /   \          /
+	//       /     \        /
+	//      7      12      42
   
 	btree_node* root = NULL;
 	REQUIRE(btree_empty(root));
 
 	const int values[] = { 20, 5, 1, 15, 9, 7, 12, 30, 25, 40, 45, 42 };
-	// const int len = sizeof(values) / sizeof(values[0]);
-	// for (int i = 0; i < len; i++) {
-	// 	root = btree_insert(values[i], root);
-	// }
 
 	root = btree_insert(values[0], root);
 	REQUIRE(!btree_empty(root));
@@ -523,7 +529,7 @@ TEST_CASE("btree") {
 	REQUIRE(!btree_empty(root));
 	REQUIRE(!btree_full(root));
 	REQUIRE(is_binary_search_tree(root));
-	pp_btree_node(root, 4, 0);
+	// pp_btree_node(root, 4, 0);
 
 	REQUIRE(btree_contains(20, root));
 	REQUIRE(btree_contains(5, root));
@@ -540,90 +546,253 @@ TEST_CASE("btree") {
 
 	const int value_not_it_btree = -5;
 	REQUIRE(!btree_contains(value_not_it_btree, root));
-	// REQUIRE(btree_remove(value_not_it_btree, root) == NULL);
 
+	// Remove all the elements in the tree one by one
+	root = btree_remove(values[0], root);
+	// pp_btree_node(root, 4, 0);
 
-	// 
+	REQUIRE(!btree_contains(values[0], root));
+	REQUIRE(btree_contains(values[1], root));
+	REQUIRE(btree_contains(values[2], root));
+	REQUIRE(btree_contains(values[3], root));
+	REQUIRE(btree_contains(values[4], root));
+	REQUIRE(btree_contains(values[5], root));
+	REQUIRE(btree_contains(values[6], root));
+	REQUIRE(btree_contains(values[7], root));
+	REQUIRE(btree_contains(values[8], root));
+	REQUIRE(btree_contains(values[9], root));
+	REQUIRE(btree_contains(values[10], root));
+	REQUIRE(btree_contains(values[11], root));
 
-	// // (B) and (C)
+	root = btree_remove(values[1], root);
+	// pp_btree_node(root, 4, 0);
 
-	// root = Insert(3, root);
+	REQUIRE(!btree_contains(values[0], root));
+	REQUIRE(!btree_contains(values[1], root));
+	REQUIRE(btree_contains(values[2], root));
+	REQUIRE(btree_contains(values[3], root));
+	REQUIRE(btree_contains(values[4], root));
+	REQUIRE(btree_contains(values[5], root));
+	REQUIRE(btree_contains(values[6], root));
+	REQUIRE(btree_contains(values[7], root));
+	REQUIRE(btree_contains(values[8], root));
+	REQUIRE(btree_contains(values[9], root));
+	REQUIRE(btree_contains(values[10], root));
+	REQUIRE(btree_contains(values[11], root));
 
-	// REQUIRE(Contains(3, root) == 1);
+	root = btree_remove(values[2], root);
+	// pp_btree_node(root, 4, 0);
 
-	// root = Remove(3, root);
+	REQUIRE(!btree_contains(values[0], root));
+	REQUIRE(!btree_contains(values[1], root));
+	REQUIRE(!btree_contains(values[2], root));
+	REQUIRE(btree_contains(values[3], root));
+	REQUIRE(btree_contains(values[4], root));
+	REQUIRE(btree_contains(values[5], root));
+	REQUIRE(btree_contains(values[6], root));
+	REQUIRE(btree_contains(values[7], root));
+	REQUIRE(btree_contains(values[8], root));
+	REQUIRE(btree_contains(values[9], root));
+	REQUIRE(btree_contains(values[10], root));
+	REQUIRE(btree_contains(values[11], root));
 
-	// REQUIRE(Contains(20, root) == 1);
-	// REQUIRE(Contains(5, root) == 1);
-	// REQUIRE(Contains(1, root) == 1);
-	// REQUIRE(Contains(15, root) == 1);
-	// REQUIRE(Contains(9, root) == 1);
-	// REQUIRE(Contains(7, root) == 1);
-	// REQUIRE(Contains(12, root) == 1);
-	// REQUIRE(Contains(30, root) == 1);
-	// REQUIRE(Contains(25, root) == 1);
-	// REQUIRE(Contains(40, root) == 1);
-	// REQUIRE(Contains(45, root) == 1);
-	// REQUIRE(Contains(42, root) == 1);
+	root = btree_remove(values[3], root);
+	// pp_btree_node(root, 4, 0);
 
-	// REQUIRE(Contains(2, root) == 0);
-	// REQUIRE(Contains(3, root) == 0);
+	REQUIRE(!btree_contains(values[0], root));
+	REQUIRE(!btree_contains(values[1], root));
+	REQUIRE(!btree_contains(values[2], root));
+	REQUIRE(!btree_contains(values[3], root));
+	REQUIRE(btree_contains(values[4], root));
+	REQUIRE(btree_contains(values[5], root));
+	REQUIRE(btree_contains(values[6], root));
+	REQUIRE(btree_contains(values[7], root));
+	REQUIRE(btree_contains(values[8], root));
+	REQUIRE(btree_contains(values[9], root));
+	REQUIRE(btree_contains(values[10], root));
+	REQUIRE(btree_contains(values[11], root));
 
-	// // (D) and (E)
-	// root = Insert(-1, root);
-	// root = Insert(-1, root);
-	// root = Remove(-1, root);
-	// REQUIRE(Contains(-1, root) == 1);
-	// root = Remove(-1, root);
-	// REQUIRE(Contains(-1, root) == 0);
+	root = btree_remove(values[4], root);
+	// pp_btree_node(root, 4, 0);
 
-	// root = Remove(45, root);
-	// root = Remove(42, root);
-	// root = Insert(16, root);
+	REQUIRE(!btree_contains(values[0], root));
+	REQUIRE(!btree_contains(values[1], root));
+	REQUIRE(!btree_contains(values[2], root));
+	REQUIRE(!btree_contains(values[3], root));
+	REQUIRE(!btree_contains(values[4], root));
+	REQUIRE(btree_contains(values[5], root));
+	REQUIRE(btree_contains(values[6], root));
+	REQUIRE(btree_contains(values[7], root));
+	REQUIRE(btree_contains(values[8], root));
+	REQUIRE(btree_contains(values[9], root));
+	REQUIRE(btree_contains(values[10], root));
+	REQUIRE(btree_contains(values[11], root));
 
-	// REQUIRE(Contains(20, root) == 1);
-	// REQUIRE(Contains(5, root) == 1);
-	// REQUIRE(Contains(1, root) == 1);
-	// REQUIRE(Contains(15, root) == 1);
-	// REQUIRE(Contains(9, root) == 1);
-	// REQUIRE(Contains(7, root) == 1);
-	// REQUIRE(Contains(12, root) == 1);
-	// REQUIRE(Contains(30, root) == 1);
-	// REQUIRE(Contains(25, root) == 1);
-	// REQUIRE(Contains(40, root) == 1);
-	// REQUIRE(Contains(45, root) == 0);
-	// REQUIRE(Contains(42, root) == 0);
-	// REQUIRE(Contains(16, root) == 1);
+	root = btree_remove(values[5], root);
+	// pp_btree_node(root, 4, 0);
 
-	// root = Remove(7, root);
+	REQUIRE(!btree_contains(values[0], root));
+	REQUIRE(!btree_contains(values[1], root));
+	REQUIRE(!btree_contains(values[2], root));
+	REQUIRE(!btree_contains(values[3], root));
+	REQUIRE(!btree_contains(values[4], root));
+	REQUIRE(!btree_contains(values[5], root));
+	REQUIRE(btree_contains(values[6], root));
+	REQUIRE(btree_contains(values[7], root));
+	REQUIRE(btree_contains(values[8], root));
+	REQUIRE(btree_contains(values[9], root));
+	REQUIRE(btree_contains(values[10], root));
+	REQUIRE(btree_contains(values[11], root));
 
-	// REQUIRE(Contains(16, root) == 1);
-	// REQUIRE(Contains(20, root) == 1);
-	// REQUIRE(Contains(5, root) == 1);jjj
-	// REQUIRE(Contains(1, root) == 1);
-	// REQUIRE(Contains(15, root) == 1);
-	// REQUIRE(Contains(9, root) == 1);
-	// REQUIRE(Contains(7, root) == 0);
-	// REQUIRE(Contains(12, root) == 1);
-	// REQUIRE(Contains(30, root) == 1);
-	// REQUIRE(Contains(25, root) == 1);
-	// REQUIRE(Contains(40, root) == 1);
-	// REQUIRE(Contains(45, root) == 0);
+	root = btree_remove(values[6], root);
+	// pp_btree_node(root, 4, 0);
 
-	// root = Remove(1, root);
-	// root = Remove(7, root);
-	// root = Remove(12, root);
-	// root = Remove(9, root);
-	// root = Remove(15, root);
-	// root = Remove(5, root);
-	// root = Remove(42, root);
-	// root = Remove(45, root);
-	// root = Remove(25, root);
-	// root = Remove(40, root);
-	// root = Remove(30, root);
-	// root = Remove(20, root);
-	// root = Remove(16, root);
+	REQUIRE(!btree_contains(values[0], root));
+	REQUIRE(!btree_contains(values[1], root));
+	REQUIRE(!btree_contains(values[2], root));
+	REQUIRE(!btree_contains(values[3], root));
+	REQUIRE(!btree_contains(values[4], root));
+	REQUIRE(!btree_contains(values[5], root));
+	REQUIRE(!btree_contains(values[6], root));
+	REQUIRE(btree_contains(values[7], root));
+	REQUIRE(btree_contains(values[8], root));
+	REQUIRE(btree_contains(values[9], root));
+	REQUIRE(btree_contains(values[10], root));
+	REQUIRE(btree_contains(values[11], root));
 
+	root = btree_remove(values[7], root);
+	// pp_btree_node(root, 4, 0);
 
-	btree_free(root);
+	REQUIRE(!btree_contains(values[0], root));
+	REQUIRE(!btree_contains(values[1], root));
+	REQUIRE(!btree_contains(values[2], root));
+	REQUIRE(!btree_contains(values[3], root));
+	REQUIRE(!btree_contains(values[4], root));
+	REQUIRE(!btree_contains(values[5], root));
+	REQUIRE(!btree_contains(values[6], root));
+	REQUIRE(!btree_contains(values[7], root));
+	REQUIRE(btree_contains(values[8], root));
+	REQUIRE(btree_contains(values[9], root));
+	REQUIRE(btree_contains(values[10], root));
+	REQUIRE(btree_contains(values[11], root));
+
+	root = btree_remove(values[8], root);
+	// pp_btree_node(root, 4, 0);
+
+	REQUIRE(!btree_contains(values[0], root));
+	REQUIRE(!btree_contains(values[1], root));
+	REQUIRE(!btree_contains(values[2], root));
+	REQUIRE(!btree_contains(values[3], root));
+	REQUIRE(!btree_contains(values[4], root));
+	REQUIRE(!btree_contains(values[5], root));
+	REQUIRE(!btree_contains(values[6], root));
+	REQUIRE(!btree_contains(values[7], root));
+	REQUIRE(!btree_contains(values[8], root));
+	REQUIRE(btree_contains(values[9], root));
+	REQUIRE(btree_contains(values[10], root));
+	REQUIRE(btree_contains(values[11], root));
+
+	root = btree_remove(values[9], root);
+	// pp_btree_node(root, 4, 0);
+
+	REQUIRE(!btree_contains(values[0], root));
+	REQUIRE(!btree_contains(values[1], root));
+	REQUIRE(!btree_contains(values[2], root));
+	REQUIRE(!btree_contains(values[3], root));
+	REQUIRE(!btree_contains(values[4], root));
+	REQUIRE(!btree_contains(values[5], root));
+	REQUIRE(!btree_contains(values[6], root));
+	REQUIRE(!btree_contains(values[7], root));
+	REQUIRE(!btree_contains(values[8], root));
+	REQUIRE(!btree_contains(values[9], root));
+	REQUIRE(btree_contains(values[10], root));
+	REQUIRE(btree_contains(values[11], root));
+		
+	root = btree_remove(values[10], root);
+	// pp_btree_node(root, 4, 0);
+
+	REQUIRE(!btree_contains(values[0], root));
+	REQUIRE(!btree_contains(values[1], root));
+	REQUIRE(!btree_contains(values[2], root));
+	REQUIRE(!btree_contains(values[3], root));
+	REQUIRE(!btree_contains(values[4], root));
+	REQUIRE(!btree_contains(values[5], root));
+	REQUIRE(!btree_contains(values[6], root));
+	REQUIRE(!btree_contains(values[7], root));
+	REQUIRE(!btree_contains(values[8], root));
+	REQUIRE(!btree_contains(values[9], root));
+	REQUIRE(!btree_contains(values[10], root));
+	REQUIRE(btree_contains(values[11], root));
+
+	root = btree_remove(values[11], root);
+	
+	REQUIRE(!btree_contains(values[0], root));
+	REQUIRE(!btree_contains(values[1], root));
+	REQUIRE(!btree_contains(values[2], root));
+	REQUIRE(!btree_contains(values[3], root));
+	REQUIRE(!btree_contains(values[4], root));
+	REQUIRE(!btree_contains(values[5], root));
+	REQUIRE(!btree_contains(values[6], root));
+	REQUIRE(!btree_contains(values[7], root));
+	REQUIRE(!btree_contains(values[8], root));
+	REQUIRE(!btree_contains(values[9], root));
+	REQUIRE(!btree_contains(values[10], root));
+	REQUIRE(!btree_contains(values[11], root));
+
+	REQUIRE(btree_empty(root));
+
+	// btree_free(root);
+}
+
+TEST_CASE("first-law") {
+	const int x = 5;
+	btree_node* t = NULL;
+	REQUIRE(btree_empty(t));
+
+	t = btree_insert(x, t);
+	REQUIRE(!btree_empty(t));
+	REQUIRE(btree_contains(x, t));
+
+	t = btree_remove(x, t);
+	REQUIRE(!btree_contains(x, t));
+
+	REQUIRE(btree_empty(t));
+}
+
+TEST_CASE("second-law") {
+	const int x = 5;
+	btree_node* t = NULL;
+	t = btree_insert(x, t);
+	const bool y = btree_contains(x, t);
+	REQUIRE(y == true);
+}
+
+TEST_CASE("third-law") {
+	const int x = 5;
+	const int y = 6;
+	btree_node* t = NULL;
+	t = btree_insert(x, t);
+	t = btree_insert(y, t);
+	const bool z = btree_contains(x, t);
+	REQUIRE(z == true);
+}
+
+TEST_CASE("fourth-law") {
+	const int x = 5;
+	btree_node* t = NULL;
+	t = btree_insert(x, t);
+	t = btree_insert(x, t);
+
+	// pp_btree_node(t, 4, 0);
+	t = btree_remove(x, t);
+	const bool y = btree_contains(x, t);
+	// pp_btree_node(t, 4, 0);
+	t = btree_remove(x, t);
+	// pp_btree_node(t, 4, 0);
+	const bool z = btree_contains(x, t);
+
+	REQUIRE(y == true);
+	REQUIRE(z == false);
+	
+	btree_free(t);
 }

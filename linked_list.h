@@ -1,7 +1,7 @@
 #pragma once
 
 typedef struct node {
-  int value;
+  int data;
   struct node *next;
 } node;
 
