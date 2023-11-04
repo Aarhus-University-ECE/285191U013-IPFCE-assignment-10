@@ -11,7 +11,7 @@ node *make_node(const int v, node *q) {
     exit(1);
   }
 
-  p->value = v;
+  p->data = v;
   p->next = q;
   return p;
 }
