@@ -15,11 +15,6 @@ bool btree_empty(btree_node* root);
 bool btree_contains(const int x, btree_node* root);
 bool btree_full(btree_node* root);
 
-// int btree_largest_element(btree_node * root);
-// int btree_smallest_element(btree_node * root);
-
-int btree_size(btree_node* root);
-
 /// Pretty print a btree_node tree
 /// @param root The root of the tree
 /// @param indent_by The number of spaces to indent by at each level
