@@ -744,7 +744,7 @@ TEST_CASE("btree") {
 	// btree_free(root);
 }
 
-TEST_CASE("first-law") {
+TEST_CASE("btree-first-law") {
 	const int x = 5;
 	btree_node* t = NULL;
 	REQUIRE(btree_empty(t));
@@ -759,7 +759,7 @@ TEST_CASE("first-law") {
 	REQUIRE(btree_empty(t));
 }
 
-TEST_CASE("second-law") {
+TEST_CASE("btree-second-law") {
 	const int x = 5;
 	btree_node* t = NULL;
 	t = btree_insert(x, t);
@@ -769,7 +769,7 @@ TEST_CASE("second-law") {
 	btree_free(t);
 }
 
-TEST_CASE("third-law") {
+TEST_CASE("btree-third-law") {
 	const int x = 5;
 	const int y = 6;
 	btree_node* t = NULL;
@@ -781,7 +781,7 @@ TEST_CASE("third-law") {
 	btree_free(t);
 }
 
-TEST_CASE("fourth-law") {
+TEST_CASE("btree-fourth-law") {
 	const int x = 5;
 	btree_node* t = NULL;
 	t = btree_insert(x, t);
